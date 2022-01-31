@@ -1,0 +1,5 @@
+tom rad	waffle iron	80	2
+tom rad	blender	200	1
+taylor rose	waffle iron	80	1
+taylor rose	knife	10	2
+taylor rose	pot	20	3
