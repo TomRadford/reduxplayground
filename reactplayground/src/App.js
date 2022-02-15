@@ -1,13 +1,28 @@
 import React, { useState, useEffect } from 'react'
 import Note from './components/Note'
+import Notification from './components/Notification'
 import noteService from './services/notes'
 
-
+const Footer = () => {
+    const footerStyle = {
+        color: 'green',
+        fontStyle: 'italic',
+        fontSize: 16
+    }
+    const d = new Date()
+    return (
+        <div style={footerStyle}> 
+            <br/>
+            <em>Note app, Department of Computer Science, University of Helsinki {d.getFullYear()}</em>
+        </div>
+    )
+}
 
 const App = () => {
     const [notes, setNotes] = useState([])
     const [newNote, setNewNote] = useState('new note...')
     const [showAll, setShowAll] = useState(true)
+    const [errorMessage, setErrorMessage] = useState(null)
 
     useEffect(() => {
         console.log('effect')
@@ -50,12 +65,15 @@ const App = () => {
                     ? note
                     : returnedNote))
         })
-        .catch(error => {
-            alert(
-                `The note ${note.content} was already deleted from the server`
-            )
-            setNotes(notes.filter(n => n.id !== id))
-        })
+        .catch((error) => {
+                setErrorMessage(
+                    `Note: ${note.content} was already deleted from the server`
+                )
+                setTimeout(() => {
+                    setErrorMessage(null)    
+                }, 5000)
+                setNotes(notes.filter(n => n.id !== id))
+            })
     }
 
     const notesToShow = showAll
@@ -68,6 +86,7 @@ const App = () => {
     return (
         <div>
             <h1>Notes</h1>
+            <Notification message={errorMessage} /> 
             <div>
                 <button onClick={() => setShowAll(!showAll)}>
                     show {showAll ? 'important' : 'all'}
@@ -88,6 +107,7 @@ const App = () => {
                     onChange={handleNoteChange} />
                 <button type='submit'>Add</button>
             </form>
+            <Footer />
         </div>
     )
 }
