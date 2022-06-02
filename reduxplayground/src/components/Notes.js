@@ -1,5 +1,6 @@
-import { connect } from 'react-redux'
+import { useDispatch, useSelector } from "react-redux"
 import { toggleImportanceOf } from "../reducers/noteReducer"
+
 
 // Presentational
 const Note = ({ note, handleClick }) => (
@@ -11,39 +12,40 @@ const Note = ({ note, handleClick }) => (
 
 //  Container = contains application logic
 const Notes = (props) => {
-    return (
-        <ul>
-            {props.notes.map(note =>
-                <Note
-                    handleClick={() => props.toggleImportanceOf(note.id)}
-                    key={note.id}
-                    note={note}
-                />
-            )}
-        </ul>
-    )
-}
-
-const mapStateToProps = (state) => {
-    if (state.filter === 'ALL') {
-        return {
-            notes: state.notes
+    const dispatch = useDispatch()
+    
+    const notes = useSelector(({ filter, notes }) => {
+        if (filter === 'ALL') {
+            return notes
         }
-    }
+        return (filter === 'IMPORTANT')
+            ? notes.filter(note => note.important)
+            : notes.filter(note => !note.important)
+    })
 
-    return {
-        notes:
-            (state.filter === 'IMPORTANT'
-                ? state.notes.filter(note => note.important)
-                : state.notes.filter(note => !note.important))
-    }
+    // const notes = useSelector(state => {
+    //     if (state.filter === 'ALL') {
+    //         return state.notes
+    //     }
+    //     return (state.filter === 'IMPORTANT')
+    //         ? state.notes.filter(note => note.important)
+    //         : state.notes.filter(note => !note.important)
+    // })
+
+    return (
+        <div>
+            <ul>
+                {notes.map(note =>
+                    <Note
+                        handleClick={() => dispatch(toggleImportanceOf(note.id))}
+                        key={note.id}
+                        note={note}
+                    />
+                )}
+            </ul>
+        </div>
+    )
+
 }
 
-const mapDispatchToProps = {
-    toggleImportanceOf,
-}
-
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(Notes)
+export default Notes

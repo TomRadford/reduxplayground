@@ -1,18 +1,18 @@
 import { createSlice } from "@reduxjs/toolkit"
 import noteService from '../services/notes'
 
-// const initialState = [
-//     {
-//         content: 'reducer defines how redux store works',
-//         important: true,
-//         id: 1,
-//     },
-//     {
-//         content: 'state of store can contain any data',
-//         important: false,
-//         id: 2,
-//     },
-// ]
+const initialState = [
+    {
+        content: 'reducer defines how redux store works',
+        important: true,
+        id: 1,
+    },
+    {
+        content: 'state of store can contain any data',
+        important: false,
+        id: 2,
+    },
+]
 
 
 // const generateID = () => Number((Math.random() * 10000000).toFixed(0))
@@ -43,6 +43,8 @@ const noteSlice = createSlice({
 export const { toggleImportanceOf, appendNote, setNotes } = noteSlice.actions
 
 // alt = https://redux-toolkit.js.org/rtk-query/overview
+
+//Thunk
 export const initializeNotes = () => {
     return async dispatch => {
         const notes = await noteService.getAll()
