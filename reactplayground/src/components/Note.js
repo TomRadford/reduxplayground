@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+
 const Note = ({ note, toggleImportance, user }) => {
   const label = note.important
     ? 'make not important'
@@ -9,7 +11,7 @@ const Note = ({ note, toggleImportance, user }) => {
   }
   return (
     <li className='note'>
-      <span>{note.content}</span>
+      <span><Link to={`/note/${note.id}`}>{note.content}</Link> </span>
       {makeImportant()}
     </li>
   )

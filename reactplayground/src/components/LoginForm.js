@@ -19,17 +19,22 @@ const LoginForm = ({ createLogin }) => {
 
       <form onSubmit={addLogin}>
         <div>
-                    username
+          username
           <input
             type="text"
             name="Username"
             id="username"
             value={username}
-            onChange={({ target }) => setUsername(target.value)}
+            onChange={({ target }) => {
+              setUsername(target.value)
+              setTimeout(() => {
+                console.log(username)
+              },1000)
+            }}
           />
         </div>
         <div>
-                    password
+          password
           <input
             type="password"
             name="Password"

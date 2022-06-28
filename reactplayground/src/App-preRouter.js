@@ -1,15 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react'
 import Note from './components/Note'
-import NotePage from './components/NotePage'
 import Notification from './components/Notification'
 import noteService from './services/notes'
 import loginService from './services/login'
 import LoginForm from './components/LoginForm'
 import NoteForm from './components/NoteForm'
 import Togglable from './components/Togglable'
-import {
-  Routes, Route, Link, Navigate, useNavigate, useMatch
-} from 'react-router-dom'
+
 
 const Footer = () => {
   const footerStyle = {
@@ -59,6 +56,7 @@ const App = () => {
   console.log('render', notes.length, 'notes')
 
   const createLogin = async (userObject) => {
+
     try {
       // console.log(await loginService.getAllUsers())
       const user = await loginService.login(userObject)
@@ -113,10 +111,6 @@ const App = () => {
     ? notes
     : notes.filter(note => note.important)
 
-  const match = useMatch('/note/:id')
-  const note = match
-    ? notes.find(note => note.id === match.params.id)
-    : null
   const noteForm = () => (
     <Togglable buttonLabel='Add a note' ref={noteFormRef}>
       <NoteForm
@@ -126,11 +120,30 @@ const App = () => {
   )
 
 
-  const Notes = () => (
+  return (
     <div>
       <h1>Notes</h1>
-      {user !== null && noteForm()
+      <Notification message={errorMessage} />
+
+      {user === null
+        ?
+        <Togglable buttonLabel='login' >
+          <LoginForm
+            createLogin={createLogin}
+          />
+        </Togglable >
+        :
+        <div>
+          <p>{user.name} logged in! <button onClick={() => {
+            window.localStorage.removeItem('loggedNotappUser')
+            setUser(null)
+            noteService.setToken(null)
+          }
+          }>Log out</button></p>
+          {noteForm()}
+        </div>
       }
+
       <div>
         <button onClick={() => setShowAll(!showAll)}>
           show {showAll ? 'important' : 'all'}
@@ -142,72 +155,12 @@ const App = () => {
             note={note}
             toggleImportance={() => toggleImportanceOf(note.id)}
             user={user}
+
           />
         )}
       </ul>
-    </div>
-  )
-
-  const Login = () => (
-    <div>
-      <Togglable buttonLabel='login' >
-        <LoginForm
-          createLogin={createLogin}
-        />
-      </Togglable >
-    </div>
-  )
-
-  const padding = { padding: '5px' }
-
-  const HomePage = () => {
-    const navigate = useNavigate()
-    return (
-      <div>
-        <h3>Welcome to the note app!</h3>
-        <button onClick={() => navigate('/notes')}>Go to notes!</button>
-      </div>
-    )
-  }
-
-  return (
-    <div>
-      <div style={{ marginBottom: '10px' }}>
-        <Link style={padding} to="/">Home</Link>
-        <Link style={padding} to="/notes">Notes</Link>
-        <Link style={padding} to="/users">Users</Link>
-        {user
-          ?
-          <div style={{ display: 'inline-block' }}>
-            <em>{user.name}  is logged in </em>
-            <button onClick={() => {
-              window.localStorage.removeItem('loggedNotappUser')
-              setUser(null)
-              noteService.setToken(null)
-            }
-            }>Log out</button>
-          </div>
-          :
-          <div style={{ display: 'inline-block' }}>
-            <Link style={padding} to="/login">Login</Link>
-          </div>
-        }
-      </div>
-
-
-      <Notification message={errorMessage} />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/notes" element={<Notes />} />
-        <Route path="/users" element={user ? <div>user list to go here</div>
-          : <Navigate replace to='/login' />} />
-        <Route path="/login" element={user ? <Navigate replace to="/" /> : <Login />} />
-        <Route path='/note/:id' element={<NotePage note={note} />} />
-      </Routes>
-
       <Footer />
-    </div >
-
+    </div>
   )
 }
 
