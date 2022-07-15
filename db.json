@@ -24,6 +24,11 @@
       "content": "Halloo!",
       "important": false,
       "id": 5
+    },
+    {
+      "content": "<script>alert('naughty')</script>",
+      "important": false,
+      "id": 6
     }
   ]
 }
